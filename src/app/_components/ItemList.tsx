@@ -32,7 +32,7 @@ export function ItemList() {
               )}
               {item.imageUrl && item.imageUrl.length > 0 && (
                 <div className="relative flex h-[40px] w-full flex-wrap gap-1 mb-1">
-                  {item.imageUrl.slice(0, 8).map((image, index) => (
+                  {item.imageUrl.slice(0, 6).map((image, index) => (
                     <div
                       key={index}
                       className="relative h-[40px] w-[40px] rounded-md border border-gray-300"
@@ -47,8 +47,8 @@ export function ItemList() {
                       />
                     </div>
                   ))}
-                  {item.imageUrl.length > 8 && (
-                    <div className="flex h-[40px] w-[40px] items-center justify-center rounded-md border border-gray-300">
+                  {item.imageUrl.length > 6 && (
+                    <div className="flex h-[40px] w-[40px] items-center justify-center">
                       <span className="text-sm text-gray-500">...</span>
                     </div>
                   )}
