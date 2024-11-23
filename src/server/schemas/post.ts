@@ -6,7 +6,7 @@ export const postSchema = z.object({
   price: z.number().min(0),
   state: z.enum(["new", "like_new", "used", "heavily_used", "damaged"]),
   imageUrl: z.array(z.string()).default([]),
-  priority: z.number().min(1).max(10).default(5).transform(n => n as 0|1|2|3|4|5|6|7|8|9|10),
+  priority: z.number().min(1).max(10).default(5),
   sold: z.boolean().default(false),
   category: z.enum(["electronics", "furniture", "appliances", "other"]),
 });

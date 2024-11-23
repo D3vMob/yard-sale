@@ -10,7 +10,7 @@ export default function TopBarNav() {
 
   return (
     <>
-      {pathname === "/" ? (
+      {pathname === "/" && (
         <Button
           className="absolute right-16 top-[0.8rem] h-8 w-16"
           variant="outline"
@@ -20,7 +20,8 @@ export default function TopBarNav() {
             <Link href="/item">form</Link>
           )}
         </Button>
-      ) : (
+      )}
+      {pathname === "/item" && (
         <Button
           className="absolute right-16 top-[0.8rem] h-8 w-16"
           variant="outline"

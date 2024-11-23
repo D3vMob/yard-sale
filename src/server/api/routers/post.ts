@@ -1,23 +1,24 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { posts } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { postSchema } from "~/server/schemas/post";
 
 export const postRouter = createTRPCRouter({
   // Public procedures
   getAll: publicProcedure.query(async ({ ctx }) => {
     return ctx.db.query.posts.findMany({
-      orderBy: (posts, { desc }) => [desc(posts.createdAt)],
+      orderBy: desc(posts.createdAt),
     });
   }),
 
   getById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      const post = await ctx.db.query.posts.findFirst({
-        where: eq(posts.id, input.id),
-      });
+      const [post] = await ctx.db.select()
+        .from(posts)
+        .where(eq(posts.id, input.id))
+        .limit(1);
       return post;
     }),
 
@@ -27,7 +28,10 @@ export const postRouter = createTRPCRouter({
       createdBy: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.insert(posts).values(input);
+      const [result] = await ctx.db.insert(posts)
+        .values(input)
+        .returning();
+      return result;
     }),
 
   update: publicProcedure
@@ -43,17 +47,22 @@ export const postRouter = createTRPCRouter({
     }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...updateData } = input;
-      return ctx.db.update(posts)
+      const [result] = await ctx.db.update(posts)
         .set({ 
           ...updateData,
           priority: updateData.priority as 0|1|2|3|4|5|6|7|8|9|10 
         })
-        .where(eq(posts.id, id));
+        .where(eq(posts.id, id))
+        .returning();
+      return result;
     }),
 
   delete: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.delete(posts).where(eq(posts.id, input.id));
+      const [result] = await ctx.db.delete(posts)
+        .where(eq(posts.id, input.id))
+        .returning();
+      return result;
     }),
 });

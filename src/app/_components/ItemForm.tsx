@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { api } from "~/trpc/react";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -28,15 +27,16 @@ import { useUser } from "@clerk/nextjs";
 import { generateUUID, uploadS3 } from "~/lib/uploadS3";
 import { CameraIcon, X } from "lucide-react";
 import { env } from "~/env";
-import { revalidateItem } from "~/lib/action";
 import { toast } from "sonner";
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { postSchema, type PostSchema } from "~/server/schemas/post";
 import { Slider } from "~/components/ui/slider";
 import { Checkbox } from "~/components/ui/checkbox";
+import { z } from "zod";
 
-export function ItemForm() {
+export function ItemForm({ id }: { id?: number }) {
+  const [item] = id ? api.post.getById.useSuspenseQuery({ id }) : [undefined];
   const router = useRouter();
   const utils = api.useUtils();
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +60,6 @@ export function ItemForm() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Convert file to base64 string instead of Buffer
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64String = reader.result as string;
@@ -87,13 +86,15 @@ export function ItemForm() {
   console.log(imageArray);
   const form = useForm<PostSchema>({
     resolver: zodResolver(postSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      price: 0,
-      state: "new",
-      imageUrl: [],
-      priority: 5,
+    values: {
+      title: item?.title ?? "",
+      description: item?.description ?? "",
+      price: item?.price ?? 0,
+      state: item?.state ?? "new",
+      imageUrl: item?.imageUrl ?? [],
+      priority: item?.priority ?? 5,
+      sold: item?.sold ?? false,
+      category: item?.category ?? "other",
     },
   });
 
@@ -224,27 +225,7 @@ export function ItemForm() {
               </FormItem>
             )}
           />
-          {imageArray.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {imageArray.map((image, index) => (
-                <div key={index} className="relative h-[100px] w-[100px] p-8">
-                  <X
-                    className="absolute -right-1 -top-1 z-20 cursor-pointer rounded-full border border-gray-500 bg-white hover:bg-gray-200"
-                    color="gray"
-                    size={18}
-                    onClick={() => handleRemoveImage(index)}
-                  />
-                  <Image
-                    src={image}
-                    alt="uploaded image"
-                    fill
-                    className="object-cover"
-                    sizes="100px"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+
           <FormField
             control={form.control}
             name="category"
@@ -317,6 +298,27 @@ export function ItemForm() {
               </FormItem>
             )}
           />
+          {imageArray.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {imageArray.map((image, index) => (
+                <div key={index} className="relative h-[100px] w-[100px] p-8">
+                  <X
+                    className="absolute -right-1 -top-1 z-20 cursor-pointer rounded-full border border-gray-500 bg-white hover:bg-gray-200"
+                    color="gray"
+                    size={18}
+                    onClick={() => handleRemoveImage(index)}
+                  />
+                  <Image
+                    src={image}
+                    alt="uploaded image"
+                    fill
+                    className="object-cover"
+                    sizes="100px"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
           <div className="flex justify-end gap-2">
             <input
               type="file"
