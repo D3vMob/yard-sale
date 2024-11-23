@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { posts } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
+import { postSchema } from "~/server/schemas/post";
 
 export const postRouter = createTRPCRouter({
   // Public procedures
@@ -22,19 +23,11 @@ export const postRouter = createTRPCRouter({
 
   // Protected procedures (require authentication)
   create: publicProcedure
-    .input(z.object({
-      title: z.string().min(1),
-      description: z.string().min(1),
-      price: z.number().min(0),
-      imageUrl: z.array(z.string()),
-      state: z.enum(["new", "like_new", "used", "heavily_used", "damaged"]),
-      priority: z.number().min(0).max(10).transform(n => n as 0|1|2|3|4|5|6|7|8|9|10),
+    .input(postSchema.extend({
       createdBy: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.insert(posts).values({
-        ...input,
-      });
+      return ctx.db.insert(posts).values(input);
     }),
 
   update: publicProcedure

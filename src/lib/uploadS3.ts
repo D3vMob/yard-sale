@@ -24,16 +24,20 @@ export async function generateUUID() {
   });
 }
 
-export async function uploadS3(file: Buffer, uuid: string, type: string) {
-  if (uuid) {
-    await s3
-      .putObject({
-        Bucket: "yard-sale",
-        Key: uuid,
-        Body: Buffer.from(file),
-        ContentType: type,
-      })
-  } else {
+export async function uploadS3(base64String: string, uuid: string, type: string) {
+  if (!uuid) {
     console.log("No UUID");
+    return;
   }
+
+  // Remove the data URL prefix to get just the base64 data
+  const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
+  const buffer = Buffer.from(base64Data, "base64");
+
+  await s3.putObject({
+    Bucket: "yard-sale",
+    Key: uuid,
+    Body: buffer,
+    ContentType: type,
+  });
 }

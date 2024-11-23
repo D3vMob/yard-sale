@@ -11,6 +11,7 @@ import {
 } from "@clerk/nextjs";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import TopBarNav from "~/components/navigation/topBarNav";
 
 
 export const metadata: Metadata = {
@@ -26,15 +27,17 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
-          <div className="top-0 w-full sticky bg-blue-500 h-14 text-gray-100 hover:text-gray-500">
+          <div className="top-0 w-full sticky bg-blue-500 h-14 z-50 shadow-md">
             <div className="flex justify-end pt-4 pr-4">
 
             <SignedOut>
               <SignInButton />
             </SignedOut>
             <SignedIn>
-                
-                <UserButton />
+                <div className="flex items-center">
+                  <TopBarNav />
+                  <UserButton />
+                </div>
             </SignedIn>
             </div>
           </div>

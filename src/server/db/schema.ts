@@ -22,6 +22,8 @@ export const posts = createTable(
     imageUrl: text("image_url", { mode: "json" }).$type<string[]>(),
     state: text("state", { enum: ["new", "like_new", "used", "heavily_used", "damaged"] }),
     priority: int("priority", { mode: "number" }).default(5).notNull().$type<0|1|2|3|4|5|6|7|8|9|10>(),
+    sold: int("sold", { mode: "boolean" }).default(false),
+    category: text("category", { enum: ["electronics", "furniture", "appliances", "other"] }),
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`(unixepoch())`),
     updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
