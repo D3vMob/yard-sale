@@ -13,13 +13,15 @@ import { api } from "~/trpc/react";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { ArrowBigLeft } from "lucide-react";
+import { ArrowBigLeft, X } from "lucide-react";
+import { useState } from "react";
 
 export const ItemDetail = ({ id }: { id: number }) => {
   
   const [item] = api.post.getById.useSuspenseQuery({ id });
   const { user } = useUser();
   const isAdmin = user?.publicMetadata.role === "admin";
+  const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
 
   if (!item) {
     notFound();
@@ -39,7 +41,41 @@ export const ItemDetail = ({ id }: { id: number }) => {
               <CarouselContent>
                 {item.imageUrl.map((image, index) => (
                   <CarouselItem key={index}>
-                    <div className="relative h-72 md:h-96">
+                    <div 
+                      className="relative h-72 md:h-96 cursor-pointer" 
+                      onClick={() => setFullscreenIndex(index)}
+                    >
+                      <Image
+                        src={image}
+                        alt={`${item.title} - Image ${index + 1}`}
+                        fill
+                        className="object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+        )}
+
+        {/* Fullscreen Modal */}
+        {fullscreenIndex !== null && (
+          <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+            <button
+              onClick={() => setFullscreenIndex(null)}
+              className="absolute top-4 right-4 text-white p-2 z-50"
+            >
+              <X className="h-8 w-8 text-gray-500 shadow-md" />
+            </button>
+            <Carousel className="w-full h-screen">
+              <CarouselContent>
+                {item.imageUrl?.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div className="relative h-screen w-full">
                       <Image
                         src={image}
                         alt={`${item.title} - Image ${index + 1}`}
