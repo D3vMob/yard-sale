@@ -1,7 +1,8 @@
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import { ItemForm } from "~/app/_components/ItemForm";
 
-export default function ItemPage({ params }: { params: { editSlug: string } }) {
+export default async function ItemPage(props: { params: Promise<{ editSlug: string }> }) {
+  const params = await props.params;
   return (
     <div className="container mx-auto py-10">
       <SignedIn>
