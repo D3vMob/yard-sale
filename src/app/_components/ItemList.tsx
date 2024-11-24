@@ -11,9 +11,22 @@ export function ItemList() {
   const handleRemoveUnderScore = (title: string) => {
     return title.replace(/_/g, " ");
   };
-  items.forEach((item) => {
-    console.log(item);
-  });
+
+
+ function handleTranslateStatus(status: string) {
+    switch (status) {
+      case "new":
+        return "新品";
+      case "like_new":
+        return "ほぼ新品";
+      case "used":
+        return "中古";
+      case "heavily_used":
+        return "大変使用されている";
+      case "damaged":
+        return "傷ついている";
+    }
+  };
   return (
     <div className="flex flex-col gap-4">
       {items
@@ -55,7 +68,7 @@ export function ItemList() {
                 </div>
               )}
               <div className="absolute right-4 top-4 rounded-md bg-gray-100 px-2 py-1 text-xs text-muted-foreground">
-                {handleRemoveUnderScore(item.state ?? "")}
+                {handleRemoveUnderScore(handleTranslateStatus(item.state) ?? "")}
               </div>
               <div className="pb-2 text-sm">
                 {item.description && item.description.length > 180
@@ -63,7 +76,7 @@ export function ItemList() {
                   : item.description}
               </div>
               <div className="flex gap-2 justify-between items-baseline px-4 border-t pt-2 -mb-3">
-                <span className="text-sm text-muted-foreground">Price:</span>
+                <span className="text-sm text-muted-foreground">価格:</span>
                 <p className="text-2xl font-bold">¥{item.price?.toLocaleString('ja-JP')}</p>
               </div>
             </CardContent>

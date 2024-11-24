@@ -12,11 +12,12 @@ import {
 
 import { TRPCReactProvider } from "~/trpc/react";
 import TopBarNav from "~/components/navigation/topBarNav";
-
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Yard-Sale",
-  description: "This is a yard-sale app, where you can buy items that we are selling.",
+  description:
+    "This is a yard-sale app, where you can buy items that we are selling.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
@@ -27,18 +28,18 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
-          <div className="top-0 w-full sticky bg-blue-500 h-14 z-50 shadow-md">
-            <div className="flex justify-end pt-4 pr-4">
-
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
-            <SignedIn>
+          <div className="sticky top-0 z-50 h-14 w-full bg-blue-500 shadow-md">
+            <div className="flex justify-between pr-4 pt-4">
+              <Link href="/" className="text-2xl font-bold text-white ps-4">OodleSimple</Link>
+              <SignedOut>
+                <SignInButton />
+              </SignedOut>
+              <SignedIn>
                 <div className="flex items-center">
                   <TopBarNav />
                   <UserButton />
                 </div>
-            </SignedIn>
+              </SignedIn>
             </div>
           </div>
           <TRPCReactProvider>{children}</TRPCReactProvider>

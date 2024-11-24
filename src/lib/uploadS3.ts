@@ -10,9 +10,9 @@ const s3 = new S3({
   },
 });
 
-export async function generateUUID() {
+export async function generateUUID(name: string) {
   return new Promise<string>((resolve) => {
-    const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+    const uuid = "xxxxxxxx".replace(
       /[xy]/g,
       function (c) {
         const r = (Math.random() * 16) | 0,
@@ -20,7 +20,7 @@ export async function generateUUID() {
         return v.toString(16);
       },
     );
-    resolve(uuid);
+    resolve(`_${name}${uuid}`);
   });
 }
 

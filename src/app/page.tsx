@@ -9,7 +9,7 @@ export default async function Home() {
   return (
     <HydrateClient>
       <main className="flex flex-col items-center justify-start pt-4 md:pt-8 px-4 md:px-8">
-        <h1 className="text-2xl font-bold mb-6 text-center">Welcome to the Yard-Sale</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">ヤードセールへようこそ</h1>
         <ItemList />
       </main>
     </HydrateClient>

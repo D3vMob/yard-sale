@@ -16,6 +16,7 @@ import Link from "next/link";
 import { ArrowBigLeft } from "lucide-react";
 
 export const ItemDetail = ({ id }: { id: number }) => {
+  
   const [item] = api.post.getById.useSuspenseQuery({ id });
   const { user } = useUser();
   const isAdmin = user?.publicMetadata.role === "admin";
@@ -70,12 +71,12 @@ export const ItemDetail = ({ id }: { id: number }) => {
         {/* Action Buttons */}
         <div className="mt-8 flex gap-4">
           <Button className="w-full" variant="default">
-            Contact Seller
+            販売者に連絡する
           </Button>
-          
+
           {isAdmin && (
-            <Button className="w-full" variant="outline">
-              Edit Item
+            <Button className="w-full" variant="outline" asChild>
+              <Link href={`/item/${item.id}`}>編集</Link>
             </Button>
           )}
         </div>

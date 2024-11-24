@@ -17,17 +17,17 @@ export default function TopBarNav() {
           asChild
         >
           {user?.publicMetadata?.role === "admin" && (
-            <Link href="/item">form</Link>
+            <Link href="/item">フォーム</Link>
           )}
         </Button>
       )}
-      {pathname === "/item" && (
+      {pathname.startsWith("/item") && (
         <Button
           className="absolute right-16 top-[0.8rem] h-8 w-16"
           variant="outline"
           asChild
         >
-          <Link href="/">Home</Link>
+          <Link href="/">ホーム</Link>
         </Button>
       )}
     </>

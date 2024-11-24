@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { generateUUID, uploadS3 } from "~/lib/uploadS3";
-import { CameraIcon, X } from "lucide-react";
+import { CameraIcon, X, Loader2 } from "lucide-react";
 import { env } from "~/env";
 import { toast } from "sonner";
 import { useRef, useState } from "react";
@@ -33,7 +33,7 @@ import Image from "next/image";
 import { postSchema, type PostSchema } from "~/server/schemas/post";
 import { Slider } from "~/components/ui/slider";
 import { Checkbox } from "~/components/ui/checkbox";
-import { z } from "zod";
+import { type z } from "zod";
 
 export function ItemForm({ id }: { id?: number }) {
   const [item] = id ? api.post.getById.useSuspenseQuery({ id }) : [undefined];
@@ -46,7 +46,12 @@ export function ItemForm({ id }: { id?: number }) {
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const imageBaseUrl = env.NEXT_PUBLIC_AWS_BUCKET;
 
-  const [imageArray, setImageArray] = useState<string[]>([]);
+  const [imageArray, setImageArray] = useState<string[]>(
+    item?.imageUrl ?? [],
+  );
+
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
 
   const handleRemoveImage = (index: number) => {
     setImageArray(imageArray.filter((_, i) => i !== index));
@@ -57,33 +62,34 @@ export function ItemForm({ id }: { id?: number }) {
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    setImageLoading(true);
     const file = event.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64String = reader.result as string;
-      const uuid = await generateUUID();
-      console.log(file.size, MAX_FILE_SIZE);
+      const uuid = await generateUUID(form.getValues("title") ?? file.name);
       if (file && file.size <= MAX_FILE_SIZE) {
         try {
           await uploadS3(base64String, uuid, file.type);
           setImageArray([...imageArray, `${imageBaseUrl}${uuid}`]);
           await user?.reload();
-          //   await revalidateItem("/");
+          setImageLoading(false);
         } catch (error) {
           console.error(error);
           toast.error("Failed to upload image");
+          setImageLoading(false);
         }
       } else {
         toast.error(
           `File size is too large. Please keep file size under ${MAX_FILE_SIZE / (1024 * 1024)} MB.`,
         );
+        setImageLoading(false);
       }
     };
     reader.readAsDataURL(file);
   };
-  console.log(imageArray);
   const form = useForm<PostSchema>({
     resolver: zodResolver(postSchema),
     values: {
@@ -100,13 +106,18 @@ export function ItemForm({ id }: { id?: number }) {
 
   const createPost = api.post.create.useMutation({
     onSuccess: async () => {
+      setIsSubmitLoading(false);
       form.reset();
       await utils.post.invalidate();
       router.push("/");
     },
+    onError: () => {
+      setIsSubmitLoading(false);
+    },
   });
 
   function onSubmit(values: z.infer<typeof postSchema>) {
+    setIsSubmitLoading(true);
     form.setValue("imageUrl", imageArray);
     const postValues = {
       ...values,
@@ -119,10 +130,10 @@ export function ItemForm({ id }: { id?: number }) {
     return (
       <div className="flex flex-col items-center justify-center">
         <div className="pb-4 text-center text-red-500">
-          You are not authorized to access this page
+        このページにアクセスする権限がありません
         </div>
         <Link href="/" className="text-blue-500 underline">
-          return home
+        家に帰る
         </Link>
       </div>
     );
@@ -135,9 +146,11 @@ export function ItemForm({ id }: { id?: number }) {
         variant="outline"
         asChild
       >
-        <Link href="/">home</Link>
+        <Link href="/">ホーム</Link>
       </Button>
-      <h1 className="pb-8 text-center text-2xl font-bold">Create New Item</h1>
+      <h1 className="pb-8 text-center text-2xl font-bold">
+        {id ? "Edit Item" : "Create New Item"}
+      </h1>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -317,6 +330,11 @@ export function ItemForm({ id }: { id?: number }) {
                   />
                 </div>
               ))}
+              {imageLoading && (
+                <div className="relative flex h-[100px] w-[100px] items-center justify-center rounded border border-gray-300 p-8">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              )}
             </div>
           )}
           <div className="flex justify-end gap-2">
@@ -334,7 +352,19 @@ export function ItemForm({ id }: { id?: number }) {
             >
               <CameraIcon className="h-6 w-6" />
             </Button>
-            <Button type="submit">Create Item</Button>
+            <Button 
+              type="submit" 
+              disabled={isSubmitLoading}
+            >
+              {isSubmitLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  送信中...
+                </>
+              ) : (
+                id ? "編集" : "作成する"
+              )}
+            </Button>
           </div>
         </form>
       </Form>
