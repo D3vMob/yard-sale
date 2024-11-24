@@ -32,7 +32,7 @@ export const ItemDetail = ({ id }: { id: number }) => {
     <Card className="w-full border-none shadow-none md:border-gray-200 md:shadow-md">
       <CardContent className="relative p-2 md:p-6">
         <Link href="/">
-          <ArrowBigLeft className="absolute right-2 top-2 md:right-4 md:top-2 h-6 w-6 fill-current" />
+          <ArrowBigLeft className="absolute right-2 top-2 md:right-4 md:top-2 h-6 w-6 fill-blue-500 text-blue-500" />
         </Link>
         {/* Image Carousel */}
         {item.imageUrl && item.imageUrl.length > 0 && (
