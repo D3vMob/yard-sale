@@ -15,6 +15,7 @@ import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowBigLeft, X } from "lucide-react";
 import { useState } from "react";
+import { calculateDiscountedPrice } from "~/lib/utils";
 
 export const ItemDetail = ({ id }: { id: number }) => {
   
@@ -97,7 +98,7 @@ export const ItemDetail = ({ id }: { id: number }) => {
         <div className="space-y-4">
           <h1 className="text-3xl font-bold">{item.title}</h1>
           <p className="text-xl font-semibold text-primary">
-            ¥{item.price.toLocaleString('ja-JP')}
+          ¥{calculateDiscountedPrice(item.price).toLocaleString('ja-JP')}
           </p>
           <div className="prose max-w-none">
             <p>{item.description}</p>

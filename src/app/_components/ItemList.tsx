@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import sold from "~/assets/sold.png";
+import { calculateDiscountedPrice } from "~/lib/utils";
 export function ItemList() {
   const [items] = api.post.getAll.useSuspenseQuery();
 
@@ -75,9 +76,13 @@ export function ItemList() {
                   ? `${item.description.slice(0, 180)}...`
                   : item.description}
               </div>
-              <div className="flex gap-2 justify-between items-baseline px-4 border-t pt-2 -mb-3">
+              <div className="flex gap-2 justify-between items-baseline px-4 border-t pt-2">
                 <span className="text-sm text-muted-foreground">価格:</span>
-                <p className="text-2xl font-bold">¥{item.price?.toLocaleString('ja-JP')}</p>
+                <p className="text-2xl font-bold">¥{calculateDiscountedPrice(item.price).toLocaleString('ja-JP')}</p>
+              </div>
+              <div className="flex gap-2 justify-center items-baseline px-4 pt-2 -mt-1 -mb-3">
+                <span className="text-xs text-muted-foreground">小売価格:</span>
+                <p className="text-xs text-gray-500">¥{item.price.toLocaleString('ja-JP')}</p>
               </div>
             </CardContent>
           </Card>
