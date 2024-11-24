@@ -1,9 +1,9 @@
 import { ItemDetail } from "~/app/_components/ItemDetail";
 import { api, HydrateClient } from "~/trpc/server";
 
-
-
-export default async function DetailPage(props: { params: Promise<{ idSlug: string }> }) {
+export default async function DetailPage(props: {
+  params: Promise<{ idSlug: string }>;
+}) {
   const params = await props.params;
 
   const id = Number(params.idSlug);

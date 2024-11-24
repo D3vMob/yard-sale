@@ -12,19 +12,20 @@ const s3 = new S3({
 
 export async function generateUUID(name: string) {
   return new Promise<string>((resolve) => {
-    const uuid = "xxxxxxxx".replace(
-      /[xy]/g,
-      function (c) {
-        const r = (Math.random() * 16) | 0,
-          v = c == "x" ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      },
-    );
+    const uuid = "xxxxxxxx".replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0,
+        v = c == "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
     resolve(`_${name}${uuid}`);
   });
 }
 
-export async function uploadS3(base64String: string, uuid: string, type: string) {
+export async function uploadS3(
+  base64String: string,
+  uuid: string,
+  type: string,
+) {
   if (!uuid) {
     console.log("No UUID");
     return;

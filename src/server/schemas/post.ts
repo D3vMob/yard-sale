@@ -12,4 +12,4 @@ export const postSchema = z.object({
   category: z.enum(["electronics", "furniture", "appliances", "other"]),
 });
 
-export type PostSchema = z.infer<typeof postSchema>; 
+export type PostSchema = z.infer<typeof postSchema>;

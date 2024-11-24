@@ -46,9 +46,7 @@ export function ItemForm({ id }: { id?: number }) {
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const imageBaseUrl = env.NEXT_PUBLIC_AWS_BUCKET;
 
-  const [imageArray, setImageArray] = useState<string[]>(
-    item?.imageUrl ?? [],
-  );
+  const [imageArray, setImageArray] = useState<string[]>(item?.imageUrl ?? []);
 
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
@@ -146,10 +144,10 @@ export function ItemForm({ id }: { id?: number }) {
     return (
       <div className="flex flex-col items-center justify-center">
         <div className="pb-4 text-center text-red-500">
-        このページにアクセスする権限がありません
+          このページにアクセスする権限がありません
         </div>
         <Link href="/" className="text-blue-500 underline">
-        家に帰る
+          家に帰る
         </Link>
       </div>
     );
@@ -368,17 +366,16 @@ export function ItemForm({ id }: { id?: number }) {
             >
               <CameraIcon className="h-6 w-6" />
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isSubmitLoading}
-            >
+            <Button type="submit" disabled={isSubmitLoading}>
               {isSubmitLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   送信中...
                 </>
+              ) : id ? (
+                "セーブ"
               ) : (
-                id ? "編集" : "作成する"
+                "作成する"
               )}
             </Button>
           </div>

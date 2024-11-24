@@ -30,7 +30,9 @@ export default function RootLayout({
         <body>
           <div className="sticky top-0 z-50 h-14 w-full bg-blue-500 shadow-md">
             <div className="flex justify-between pr-4 pt-4">
-              <Link href="/" className="text-2xl font-bold text-white ps-4">OodleSimple</Link>
+              <Link href="/" className="ps-4 text-2xl font-bold text-white">
+                OodleSimple
+              </Link>
               <SignedOut>
                 <SignInButton />
               </SignedOut>

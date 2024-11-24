@@ -15,7 +15,8 @@ export const postRouter = createTRPCRouter({
   getById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      const [post] = await ctx.db.select()
+      const [post] = await ctx.db
+        .select()
         .from(posts)
         .where(eq(posts.id, input.id))
         .limit(1);
@@ -24,32 +25,37 @@ export const postRouter = createTRPCRouter({
 
   // Protected procedures (require authentication)
   create: publicProcedure
-    .input(postSchema.extend({
-      createdBy: z.string().optional(),
-    }))
+    .input(
+      postSchema.extend({
+        createdBy: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      const [result] = await ctx.db.insert(posts)
-        .values(input)
-        .returning();
+      const [result] = await ctx.db.insert(posts).values(input).returning();
       return result;
     }),
 
   update: publicProcedure
-    .input(z.object({
-      id: z.number(),
-      title: z.string().min(1).optional(),
-      description: z.string().min(1).optional(),
-      price: z.number().min(0).optional(),
-      imageUrl: z.array(z.string()).optional(),
-      state: z.enum(["new", "like_new", "used", "heavily_used", "damaged"]).optional(),
-      priority: z.number().min(0).max(10).optional(),
-      updatedBy: z.string().optional(),
-      sold: z.boolean().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.number(),
+        title: z.string().min(1).optional(),
+        description: z.string().min(1).optional(),
+        price: z.number().min(0).optional(),
+        imageUrl: z.array(z.string()).optional(),
+        state: z
+          .enum(["new", "like_new", "used", "heavily_used", "damaged"])
+          .optional(),
+        priority: z.number().min(0).max(10).optional(),
+        updatedBy: z.string().optional(),
+        sold: z.boolean().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { id, ...updateData } = input;
-      const [result] = await ctx.db.update(posts)
-        .set({ 
+      const [result] = await ctx.db
+        .update(posts)
+        .set({
           ...updateData,
         })
         .where(eq(posts.id, id))
@@ -60,7 +66,8 @@ export const postRouter = createTRPCRouter({
   delete: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const [result] = await ctx.db.delete(posts)
+      const [result] = await ctx.db
+        .delete(posts)
         .where(eq(posts.id, input.id))
         .returning();
       return result;
