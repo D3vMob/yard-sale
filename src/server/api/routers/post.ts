@@ -44,13 +44,13 @@ export const postRouter = createTRPCRouter({
       state: z.enum(["new", "like_new", "used", "heavily_used", "damaged"]).optional(),
       priority: z.number().min(0).max(10).optional(),
       updatedBy: z.string().optional(),
+      sold: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...updateData } = input;
       const [result] = await ctx.db.update(posts)
         .set({ 
           ...updateData,
-          priority: updateData.priority as 0|1|2|3|4|5|6|7|8|9|10 
         })
         .where(eq(posts.id, id))
         .returning();

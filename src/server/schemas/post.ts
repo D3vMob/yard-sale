@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const postSchema = z.object({
+  id: z.number().optional(),
   title: z.string().min(1),
   description: z.string().min(1),
   price: z.number().min(0),

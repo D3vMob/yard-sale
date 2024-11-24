@@ -93,6 +93,7 @@ export function ItemForm({ id }: { id?: number }) {
   const form = useForm<PostSchema>({
     resolver: zodResolver(postSchema),
     values: {
+      id: item?.id ?? undefined,
       title: item?.title ?? "",
       description: item?.description ?? "",
       price: item?.price ?? 0,
@@ -116,6 +117,17 @@ export function ItemForm({ id }: { id?: number }) {
     },
   });
 
+  const updatePost = api.post.update.useMutation({
+    onSuccess: async () => {
+      setIsSubmitLoading(false);
+      await utils.post.invalidate();
+      router.push("/");
+    },
+    onError: () => {
+      setIsSubmitLoading(false);
+    },
+  });
+
   function onSubmit(values: z.infer<typeof postSchema>) {
     setIsSubmitLoading(true);
     form.setValue("imageUrl", imageArray);
@@ -123,7 +135,11 @@ export function ItemForm({ id }: { id?: number }) {
       ...values,
       imageUrl: imageArray,
     };
-    createPost.mutate(postValues);
+    if (id) {
+      updatePost.mutate({ id, ...postValues });
+    } else {
+      createPost.mutate(postValues);
+    }
   }
 
   if (!isAdmin) {
