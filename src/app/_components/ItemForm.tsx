@@ -190,7 +190,7 @@ export function ItemForm({ id }: { id?: number }) {
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Description" {...field} />
+                  <Textarea placeholder="Description" {...field} rows={30} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
