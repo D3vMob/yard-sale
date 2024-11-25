@@ -43,6 +43,7 @@ export function ItemForm({ id }: { id?: number }) {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const { user } = useUser();
   const isAdmin = user?.publicMetadata.role === "admin";
+  const [isPriority, setIsPriority] = useState(item?.priority ?? 5);
 
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const imageBaseUrl = env.NEXT_PUBLIC_AWS_BUCKET;
@@ -293,7 +294,7 @@ export function ItemForm({ id }: { id?: number }) {
             name="priority"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Priority (1-10)</FormLabel>
+                <FormLabel>Priority: {isPriority}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Slider
@@ -301,7 +302,10 @@ export function ItemForm({ id }: { id?: number }) {
                       max={10}
                       step={1}
                       value={[field.value]}
-                      onValueChange={(vals) => field.onChange(vals[0])}
+                      onValueChange={(vals) => {
+                        field.onChange(vals[0]);
+                        setIsPriority(vals[0] ?? 5);
+                      }}
                       className="py-4"
                     />
                   </div>
