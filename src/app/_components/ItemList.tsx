@@ -114,9 +114,13 @@ export function ItemList() {
                   )}
                 </div>
                 <div className="pb-2 text-sm">
-                  {item.description && item.description.length > 180
-                    ? `${item.description.slice(0, 180)}...`
-                    : item.description}
+                  {item.description && (
+                    <div
+                      className="ProseMirror px-6 py-4"
+                      style={{ whiteSpace: "pre-line" }}
+                      dangerouslySetInnerHTML={{ __html: item.description }}
+                    />
+                  )}
                 </div>
                 <div className="flex items-baseline justify-between gap-2 border-t px-4 pt-2">
                   <span className="text-sm text-muted-foreground">価格:</span>

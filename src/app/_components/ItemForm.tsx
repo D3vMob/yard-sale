@@ -34,6 +34,7 @@ import { postSchema, type PostSchema } from "~/server/schemas/post";
 import { Slider } from "~/components/ui/slider";
 import { Checkbox } from "~/components/ui/checkbox";
 import { type z } from "zod";
+import Tiptap from "~/components/editor/Tiptap";
 
 export function ItemForm({ id }: { id?: number }) {
   const [item] = id ? api.post.getById.useSuspenseQuery({ id }) : [undefined];
@@ -190,7 +191,8 @@ export function ItemForm({ id }: { id?: number }) {
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Description" {...field} rows={30} />
+                  {/* <Textarea placeholder="Description" {...field} rows={30} /> */}
+                  <Tiptap onChange={field.onChange} content={field.value} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

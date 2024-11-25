@@ -6,6 +6,11 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "100mb",
+    },
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -21,6 +26,9 @@ const config = {
         pathname: "/**",
       },
     ],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 };
 

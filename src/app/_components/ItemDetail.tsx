@@ -99,7 +99,13 @@ export const ItemDetail = ({ id }: { id: number }) => {
             ¥{calculateDiscountedPrice(item.price).toLocaleString("ja-JP")}
           </p>
           <div className="prose max-w-none">
-            <p>{item.description}</p>
+            {item.description && (
+              <div
+                className="ProseMirror px-6 py-4"
+                style={{ whiteSpace: "pre-line" }}
+                dangerouslySetInnerHTML={{ __html: item.description }}
+              />
+            )}
           </div>
         </div>
 
