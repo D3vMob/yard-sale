@@ -108,12 +108,12 @@ export function ItemList() {
                     )}
                   </div>
                 )}
-                <div className="absolute right-4 top-4 rounded-md bg-gray-100 px-2 py-1 text-xs text-muted-foreground">
+                <div className="absolute right-1 top-1 rounded-md bg-blue-500 px-2 py-0.5 text-xs text-white">
                   {handleRemoveUnderScore(
                     handleTranslateStatus(item.state) ?? "",
                   )}
                 </div>
-                <div className="pb-2 text-sm">
+                <div className="pb-2 text-sm max-h-32 overflow-hidden">
                   {item.description && (
                     <div
                       className="ProseMirror px-6 py-4"
