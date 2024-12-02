@@ -14,8 +14,11 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 export function ItemList() {
+  const { user } = useUser();
+  const isAdmin = user?.publicMetadata.role === "admin";
   const [items] = api.post.getAll.useSuspenseQuery();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
@@ -72,77 +75,82 @@ export function ItemList() {
 
       {filteredItems
         .sort((a, b) => b.priority - a.priority)
-        .map((item) => (
-          <Link key={item.id} href={`/detail/${item.id}`}>
-            <Card className="relative w-96 transition-shadow hover:shadow-lg">
-              <CardHeader>
-                <CardTitle className="-mb-4 text-2xl">{item.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {item.sold && (
-                  <div className="absolute left-0 top-0 z-30 flex h-full w-full items-center justify-center">
-                    <Image src={sold} alt="sold" width={200} />
-                  </div>
-                )}
-                {item.imageUrl && item.imageUrl.length > 0 && (
-                  <div className="relative mb-1 flex h-[40px] w-full flex-wrap gap-1">
-                    {item.imageUrl.slice(0, 6).map((image, index) => (
-                      <div
-                        key={index}
-                        className="relative h-[40px] w-[40px] rounded-md border border-gray-300"
-                      >
-                        <Image
+        .map((item) => {
+          // Skip items with priority 1 for non-admin users
+          if (item.priority === 1 && !isAdmin) return null;
+          
+          return (
+            <Link key={item.id} href={`/detail/${item.id}`}>
+              <Card className="relative w-96 transition-shadow hover:shadow-lg">
+                <CardHeader>
+                  <CardTitle className="-mb-4 text-2xl">{item.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {item.sold && (
+                    <div className="absolute left-0 top-0 z-30 flex h-full w-full items-center justify-center">
+                      <Image src={sold} alt="sold" width={200} />
+                    </div>
+                  )}
+                  {item.imageUrl && item.imageUrl.length > 0 && (
+                    <div className="relative mb-1 flex h-[40px] w-full flex-wrap gap-1">
+                      {item.imageUrl.slice(0, 6).map((image, index) => (
+                        <div
                           key={index}
-                          src={image}
-                          alt="item image"
-                          fill
-                          className="object-cover"
-                          sizes="25px"
-                        />
-                      </div>
-                    ))}
-                    {item.imageUrl.length > 6 && (
-                      <div className="flex h-[40px] w-[40px] items-center justify-center">
-                        <span className="text-sm text-gray-500">...</span>
-                      </div>
+                          className="relative h-[40px] w-[40px] rounded-md border border-gray-300"
+                        >
+                          <Image
+                            key={index}
+                            src={image}
+                            alt="item image"
+                            fill
+                            className="object-cover"
+                            sizes="25px"
+                          />
+                        </div>
+                      ))}
+                      {item.imageUrl.length > 6 && (
+                        <div className="flex h-[40px] w-[40px] items-center justify-center">
+                          <span className="text-sm text-gray-500">...</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <div className="absolute right-1 top-1 rounded-md bg-blue-500 px-2 py-0.5 text-xs text-white">
+                    {handleRemoveUnderScore(
+                      handleTranslateStatus(item.state) ?? "",
                     )}
                   </div>
-                )}
-                <div className="absolute right-1 top-1 rounded-md bg-blue-500 px-2 py-0.5 text-xs text-white">
-                  {handleRemoveUnderScore(
-                    handleTranslateStatus(item.state) ?? "",
-                  )}
-                </div>
-                <div className="pb-2 text-sm max-h-32 overflow-hidden">
-                  {item.description && (
-                    <div
-                      className="ProseMirror px-6 py-4"
-                      style={{ whiteSpace: "pre-line" }}
-                      dangerouslySetInnerHTML={{ __html: item.description }}
-                    />
-                  )}
-                </div>
-                <div className="flex items-baseline justify-between gap-2 border-t px-4 pt-2">
-                  <span className="text-sm text-muted-foreground">価格:</span>
-                  <p className="text-2xl font-bold">
-                    ¥
-                    {calculateDiscountedPrice(item.price).toLocaleString(
-                      "ja-JP",
+                  <div className="pb-2 text-sm max-h-32 overflow-hidden">
+                    {item.description && (
+                      <div
+                        className="ProseMirror px-6 py-4"
+                        style={{ whiteSpace: "pre-line" }}
+                        dangerouslySetInnerHTML={{ __html: item.description }}
+                      />
                     )}
-                  </p>
-                </div>
-                <div className="-mb-3 -mt-1 flex items-baseline justify-center gap-2 px-4 pt-2">
-                  <span className="text-xs text-muted-foreground">
-                    小売価格:
-                  </span>
-                  <p className="text-xs text-gray-500">
-                    ¥{item.price.toLocaleString("ja-JP")}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+                  </div>
+                  <div className="flex items-baseline justify-between gap-2 border-t px-4 pt-2">
+                    <span className="text-sm text-muted-foreground">価格:</span>
+                    <p className="text-2xl font-bold">
+                      ¥
+                      {calculateDiscountedPrice(item.price).toLocaleString(
+                        "ja-JP",
+                      )}
+                    </p>
+                  </div>
+                  <div className="-mb-3 -mt-1 flex items-baseline justify-center gap-2 px-4 pt-2">
+                    <span className="text-xs text-muted-foreground">
+                      小売価格:
+                    </span>
+                    <p className="text-xs text-gray-500">
+                      ¥{item.price.toLocaleString("ja-JP")}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
     </div>
   );
 }
