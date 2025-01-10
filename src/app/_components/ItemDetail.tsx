@@ -111,8 +111,12 @@ export const ItemDetail = ({ id }: { id: number }) => {
 
         {/* Action Buttons */}
         <div className="mt-8 flex gap-4">
-          <Button className="w-full" variant="default">
-            販売者に連絡する
+          <Button className="w-full" variant="default" asChild>
+            <Link
+              href={`mailto:emerald3wave@gmail.com?subject=${encodeURIComponent(item.title.slice(0, 50))}&body=${encodeURIComponent(`${item.title}について興味があります。`)}`}
+            >
+              販売者に連絡する
+            </Link>
           </Button>
 
           {isAdmin && (
