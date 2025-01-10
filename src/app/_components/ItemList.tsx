@@ -48,7 +48,7 @@ export function ItemList() {
   }
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-96">
+      <div className="w-96 mx-auto">
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger>
             <SelectValue placeholder="カテゴリーを選択" />
@@ -72,10 +72,10 @@ export function ItemList() {
           </SelectContent>
         </Select>
       </div>
-
-      {filteredItems
-        .sort((a, b) => b.priority - a.priority)
-        .map((item) => {
+      <div className="flex flex-wrap gap-4 justify-center">   
+        {filteredItems
+          .sort((a, b) => b.priority - a.priority)
+          .map((item) => {
           // Skip items with priority 1 for non-admin users
           if (item.priority === 1 && !isAdmin) return null;
           
@@ -151,6 +151,7 @@ export function ItemList() {
             </Link>
           );
         })}
+      </div>
     </div>
   );
 }
