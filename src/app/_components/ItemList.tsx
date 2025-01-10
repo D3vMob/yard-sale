@@ -83,7 +83,7 @@ export function ItemList() {
             <Link key={item.id} href={`/detail/${item.id}`}>
               <Card className="relative w-96 transition-shadow hover:shadow-lg">
                 <CardHeader>
-                  <CardTitle className="-mb-4 text-2xl">{item.title}</CardTitle>
+                  <CardTitle className="-mb-4 text-2xl truncate">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {item.sold && (
