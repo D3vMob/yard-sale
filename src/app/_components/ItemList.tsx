@@ -133,7 +133,7 @@ export function ItemList() {
                     <span className="text-sm text-muted-foreground">価格:</span>
                     <p className="text-2xl font-bold">
                       ¥
-                      {calculateDiscountedPrice(item.price).toLocaleString(
+                      {calculateDiscountedPrice(item.price, item.sold).toLocaleString(
                         "ja-JP",
                       )}
                     </p>
