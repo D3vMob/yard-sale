@@ -96,7 +96,7 @@ export const ItemDetail = ({ id }: { id: number }) => {
         <div className="space-y-4">
           <h1 className="text-3xl font-bold">{item.title}</h1>
           <p className="text-xl font-semibold text-primary">
-            ¥{calculateDiscountedPrice(item.price).toLocaleString("ja-JP")}
+            ¥{calculateDiscountedPrice(item.price, item.sold).toLocaleString("ja-JP")}
           </p>
           <div className="prose max-w-none">
             {item.description && (
