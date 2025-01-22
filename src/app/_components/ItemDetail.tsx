@@ -40,17 +40,31 @@ export const ItemDetail = ({ id }: { id: number }) => {
               <CarouselContent>
                 {item.imageUrl.map((image, index) => (
                   <CarouselItem key={index}>
-                    <div
-                      className="relative h-72 cursor-pointer md:h-96"
-                      onClick={() => setFullscreenIndex(index)}
-                    >
-                      <Image
-                        src={image}
-                        alt={`${item.title} - Image ${index + 1}`}
-                        fill
-                        className="object-contain"
-                        loading="lazy"
-                      />
+                    <div className="relative">
+                      <div
+                        className="relative h-72 cursor-pointer md:h-96"
+                        onClick={() => setFullscreenIndex(index)}
+                      >
+                        <Image
+                          src={image}
+                          alt={`${item.title} - Image ${index + 1}`}
+                          fill
+                          className="object-contain"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          quality={100}
+                          priority={index === 0}
+                        />
+                      </div>
+                      {isAdmin && (
+                        <a
+                          href={image}
+                          download
+                          className="absolute bottom-2 right-2 z-30 rounded-md bg-white/80 px-2 py-1 text-sm text-gray-700 hover:bg-gray-200"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Download Original
+                        </a>
+                      )}
                     </div>
                   </CarouselItem>
                 ))}
@@ -80,7 +94,9 @@ export const ItemDetail = ({ id }: { id: number }) => {
                         alt={`${item.title} - Image ${index + 1}`}
                         fill
                         className="object-contain"
-                        loading="lazy"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        quality={100}
+                        priority={index === 0}
                       />
                     </div>
                   </CarouselItem>
@@ -96,7 +112,10 @@ export const ItemDetail = ({ id }: { id: number }) => {
         <div className="space-y-4">
           <h1 className="text-3xl font-bold">{item.title}</h1>
           <p className="text-xl font-semibold text-primary">
-            ¥{calculateDiscountedPrice(item.price, item.sold).toLocaleString("ja-JP")}
+            ¥
+            {calculateDiscountedPrice(item.price, item.sold).toLocaleString(
+              "ja-JP",
+            )}
           </p>
           <div className="prose max-w-none">
             {item.description && (
